@@ -1,21 +1,25 @@
 package com.moesee.moeseedemo.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.moesee.moeseedemo.pojo.Stat;
+import com.moesee.moeseedemo.pojo.Video;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element; // 确保导入 Element 类
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 @Service
 public class VideoScraperServiceImpl implements VideoScraperService {
+
     @Value("${db.url}")
     private String dbUrl;
 
@@ -25,85 +29,110 @@ public class VideoScraperServiceImpl implements VideoScraperService {
     @Value("${db.password}")
     private String dbPassword;
 
-    @Value("${scraper.url}")
-    private String scraperUrl;
+    // 热门推荐接口基础 URL（不含分页参数）
+    @Value("${scraper.jsonUrl}")
+    private String jsonUrl; // 如 "https://api.bilibili.com/x/web-interface/popular"
+
+    // 固定参数，ps 固定为 20 以及其他必要参数
+    @Value("${scraper.ps}")
+    private int ps; // 例如：20
+
+    // 固定的额外参数，可直接在配置中设置，也可写在代码里
+    @Value("${scraper.web_location}")
+    private String webLocation; // 例如 "333.934"
+
+    @Value("${scraper.w_rid}")
+    private String wRid; // 例如 "dcb9ec501a580673adda01ce462e12a4"
+
+    @Value("${scraper.wts}")
+    private String wts; // 例如 "1741262398"
+
+    private Gson gson = new Gson();
 
     @Override
-    @Scheduled(fixedDelay = 100000)
     public void scrapeVideos() {
-        try {
-            // 获取网页文档
-            Document document = Jsoup.connect(scraperUrl).get();
+        int pn = 1;
+        while (true) {
+            // 构造分页 URL
+            String pageUrl = jsonUrl + "?ps=" + ps + "&pn=" + pn + "&web_location=" + webLocation
+                    + "&w_rid=" + wRid + "&wts=" + wts;
+            System.out.println("Fetching page: " + pn);
+            try {
+                // 使用 Jsoup 获取接口返回的 JSON 数据
+                // 注意必须使用 ignoreContentType(true) 以便读取 JSON 类型数据
+                String json = Jsoup.connect(pageUrl)
+                        .ignoreContentType(true)
+                        .execute()
+                        .body();
 
-            // 提取视频卡片信息
-            Elements videoCards = document.select("div.bili-video-card__wrap"); // 根据B站的实际HTML结构选择合适的CSS选择器
-            for (Element videoCard : videoCards) {
-                String title = videoCard.select("h3.bili-video-card__info--tit a").text(); // 获取标题文本内容
-                String videoUrl = videoCard.select("h3.bili-video-card__info--tit a").attr("href"); // 获取视频链接
+                // 输出部分 JSON 内容用于调试
+                System.out.println("Page " + pn + " JSON: " + (json.length() > 100 ? json.substring(0, 100) + "..." : json));
 
-                // 获取播放量信息并转换为整数
-                String viewsText = videoCard.select("span.bili-video-card__stats--text").text();
-                int views = viewsText.isEmpty() ? 0 : convertViewsToInt(viewsText.replaceAll("[^\\d.万]", ""));
+                // 假设返回 JSON 格式为一个数组形式的结果或者 JSON 对象中有分页结果字段
+                // 这里假设直接返回视频对象数组，例如: [ { video1... }, { video2... }, ... ]
+                Type videoListType = new TypeToken<List<Video>>() {}.getType();
+                List<Video> videos = gson.fromJson(json, videoListType);
 
-                // 获取视频时长信息并转换为秒数
-                String durationText = videoCard.select("span.bili-video-card__stats__duration").text();
-                int duration = durationText.isEmpty() ? 0 : convertDurationToSeconds(durationText);
+                // 如果本页不存在视频数据，则结束翻页
+                if (videos == null || videos.isEmpty()) {
+                    System.out.println("No more videos found on page " + pn + ". Ending pagination.");
+                    break;
+                }
 
-                // 打印视频信息
-                System.out.println("Title: " + title);
-                System.out.println("URL: " + videoUrl);
-                System.out.println("Views: " + views);
-                System.out.println("Duration: " + duration + " seconds");
-                System.out.println("-----------------------------------");
-                    saveVideoToDatabase(title, videoUrl, views, duration);
+                // 遍历本页所有视频
+                for (Video video : videos) {
+                    // 视频标题
+                    String title = video.getTitle();
+                    // 视频标签：由 tname 和 tnamev2 合并而成（若第二个不为空）
+                    String videoTags = video.getTname();
+                    if (video.getTnamev2() != null && !video.getTnamev2().trim().isEmpty()) {
+                        videoTags += "," + video.getTnamev2();
+                    }
+                    // 视频 URL：使用 short_link_v2
+                    String videoUrl = video.getShort_link_v2();
+                    // 播放量：取 stat.view
+                    int views = (video.getStat() != null) ? video.getStat().getView() : 0;
+                    // 视频时长：duration 字段（秒）
+                    int duration = video.getDuration();
+
+                    System.out.println("Title: " + title);
+                    System.out.println("Tags: " + videoTags);
+                    System.out.println("URL: " + videoUrl);
+                    System.out.println("Views: " + views);
+                    System.out.println("Duration: " + duration + " seconds");
+                    System.out.println("-----------------------------------");
+
+                    // 存储到数据库
+                    saveVideoToDatabase(title, videoTags, videoUrl, views, duration);
+                }
+
+                // 如果本页返回视频数量小于 ps，则认为已到最后一页
+                if (videos.size() < ps) {
+                    System.out.println("Page " + pn + " returned less than " + ps + " videos. Ending pagination.");
+                    break;
+                }
+                pn++; // 下一页
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-    // 将播放量字符串转换为整数
-    private static int convertViewsToInt(String viewsText) {
-        // 移除所有非数值字符，保留小数点和万
-        viewsText = viewsText.replaceAll("[^\\d.万]", "");
-
-        // 处理多个小数点的情况，只保留第一个小数点
-        int firstDotIndex = viewsText.indexOf(".");
-        if (firstDotIndex != -1) {
-            viewsText = viewsText.substring(0, firstDotIndex + 1) + viewsText.substring(firstDotIndex + 1).replaceAll("\\.", "");
-        }
-
-        // 处理带有"万"字的情况
-        if (viewsText.contains("万")) {
-            double viewsDouble = Double.parseDouble(viewsText.replace("万", "")) * 10000;
-            return (int) viewsDouble;
-        }
-        return Integer.parseInt(viewsText);
-    }
-
-        // 将时长字符串转换为秒数
-    private static int convertDurationToSeconds(String durationText) {
-        String[] parts = durationText.split(":");
-        int seconds = 0;
-        if (parts.length == 2) {
-            seconds = Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
-        } else if (parts.length == 3) {
-            seconds = Integer.parseInt(parts[0]) * 3600 + Integer.parseInt(parts[1]) * 60 + Integer.parseInt(parts[2]);
-        }
-        return seconds;
-    }
-
-    private void saveVideoToDatabase(String title, String videoUrl, int views, int duration) {
+    private void saveVideoToDatabase(String title, String videoTags, String videoUrl, int views, int duration) {
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
-            String sql = "INSERT INTO videos (video_title, video_url, video_views, video_duration) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO videos (video_title, video_tags, video_url, video_views, video_duration) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, title);
-            statement.setString(2, videoUrl);
-            statement.setInt(3, views);
-            statement.setInt(4, duration);
+            statement.setString(2, videoTags);
+            statement.setString(3, videoUrl);
+            statement.setInt(4, views);
+            statement.setInt(5, duration);
             statement.executeUpdate();
+            System.out.println("Video saved: " + title);
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Failed to save video: " + title);
         }
     }
 }
