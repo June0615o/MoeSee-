@@ -53,6 +53,7 @@ public class VideoScraperServiceImpl implements VideoScraperService {
                 System.out.println("Views: " + views);
                 System.out.println("Duration: " + duration + " seconds");
                 System.out.println("-----------------------------------");
+                saveVideoToDatabase(title,videoUrl,views,duration);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,16 +82,14 @@ public class VideoScraperServiceImpl implements VideoScraperService {
         return seconds;
     }
 
-    private void saveVideoToDatabase(String title, String tags, String videoUrl, int views, int duration, String uploadDate) {
+    private void saveVideoToDatabase(String title, String videoUrl, int views, int duration) {
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
-            String sql = "INSERT INTO videos (video_title, video_tags, video_url, video_views, video_duration, video_upload_date) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO videos (video_title, video_url, video_views, video_duration) VALUES (?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, title);
-            statement.setString(2, tags);
-            statement.setString(3, videoUrl);
-            statement.setInt(4, views);
-            statement.setInt(5, duration);
-            statement.setString(6, uploadDate);
+            statement.setString(2, videoUrl);
+            statement.setInt(3, views);
+            statement.setInt(4, duration);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
