@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,6 +29,7 @@ public class VideoScraperServiceImpl implements VideoScraperService {
     private String scraperUrl;
 
     @Override
+    @Scheduled(fixedDelay = 100000)
     public void scrapeVideos() {
         try {
             // 获取网页文档
@@ -53,7 +55,7 @@ public class VideoScraperServiceImpl implements VideoScraperService {
                 System.out.println("Views: " + views);
                 System.out.println("Duration: " + duration + " seconds");
                 System.out.println("-----------------------------------");
-                saveVideoToDatabase(title,videoUrl,views,duration);
+                    saveVideoToDatabase(title, videoUrl, views, duration);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,15 +64,24 @@ public class VideoScraperServiceImpl implements VideoScraperService {
 
     // 将播放量字符串转换为整数
     private static int convertViewsToInt(String viewsText) {
+        // 移除所有非数值字符，保留小数点和万
+        viewsText = viewsText.replaceAll("[^\\d.万]", "");
+
+        // 处理多个小数点的情况，只保留第一个小数点
+        int firstDotIndex = viewsText.indexOf(".");
+        if (firstDotIndex != -1) {
+            viewsText = viewsText.substring(0, firstDotIndex + 1) + viewsText.substring(firstDotIndex + 1).replaceAll("\\.", "");
+        }
+
         // 处理带有"万"字的情况
         if (viewsText.contains("万")) {
             double viewsDouble = Double.parseDouble(viewsText.replace("万", "")) * 10000;
             return (int) viewsDouble;
         }
-        return Integer.parseInt(viewsText.replaceAll("[^\\d]", ""));
+        return Integer.parseInt(viewsText);
     }
 
-    // 将时长字符串转换为秒数
+        // 将时长字符串转换为秒数
     private static int convertDurationToSeconds(String durationText) {
         String[] parts = durationText.split(":");
         int seconds = 0;
