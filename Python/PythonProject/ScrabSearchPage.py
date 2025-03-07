@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import pymysql
 import time
 from pymysql.err import IntegrityError
