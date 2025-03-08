@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import pymysql
 import time
 from pymysql.err import IntegrityError
@@ -71,7 +70,7 @@ class BZhan:
 
     def main(self):
         # 例如只爬取前 9 页用于测试
-        for i in range(1, 2):
+        for i in range(1, 10):
             print("Fetching page", i)
             res = self.get_data(i)
             self.parse_data(res)
