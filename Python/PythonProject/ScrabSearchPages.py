@@ -61,46 +61,50 @@ def save_to_db(video_info):
     finally:
         connection.close()
 
-def search_bilibili(keyword, max_pages=5):
-    """逐页爬取并保存到数据库"""
-    for page in range(1, max_pages + 1):
-        # 发起搜索请求（无需登录）
-        result = sync(search.search_by_type(
-            keyword=keyword,
-            search_type=search.SearchObjectType.VIDEO,
-            page=page
-        ))
+def search_bilibili_for_keywords(keywords, max_pages=25):
+    """逐个关键词检索并保存到数据库"""
+    for keyword in keywords:
+        print(f"Searching for keyword: {keyword}")
+        for page in range(1, max_pages + 1):
+            # 发起搜索请求（无需登录）
+            result = sync(search.search_by_type(
+                keyword=keyword,
+                search_type=search.SearchObjectType.VIDEO,
+                page=page
+            ))
 
-        if "result" not in result:
-            print(f"No result found on page {page}")
-            continue
-
-        # 解析结果
-        for item in result["result"]:
-            # 转换播放时长为秒数
-            duration_seconds = convert_duration(item["duration"])
-
-            # 忽略播放时长超过30分钟的视频
-            if duration_seconds > 1800:
+            # 检查是否包含 "result" 键
+            if "result" not in result:
+                print(f"No result found for keyword '{keyword}' on page {page}")
                 continue
 
-            # 提取核心字段
-            video_info = {
-                "标题": clean_title(item["title"]),
-                "视频标签": item["tag"].split(",")[:2] if item.get("tag") else [],
-                "视频链接": f"https://www.bilibili.com/video/{item['bvid']}",
-                "播放量": item["play"],
-                "播放时长": duration_seconds,
-                "封面图片": item.get("pic")
-            }
-            print(video_info)
+            # 解析结果
+            for item in result["result"]:
+                # 转换播放时长为秒数
+                duration_seconds = convert_duration(item["duration"])
 
-            save_to_db(video_info)
+                # 忽略播放时长超过30分钟的视频
+                if duration_seconds > 1800:
+                    continue
 
-        # 在每次爬取页面之间添加随机延时（避免封IP）
-        delay = random.uniform(1, 1.5)  # 随机延时 1 到 3 秒
-        print(f"Pausing for {delay:.2f} seconds to avoid rate limiting...")
-        time.sleep(delay)
+                # 提取核心字段
+                video_info = {
+                    "标题": clean_title(item["title"]),
+                    "视频标签": item["tag"].split(",")[:4] if item.get("tag") else [],
+                    "视频链接": f"https://www.bilibili.com/video/{item['bvid']}",
+                    "播放量": item["play"],
+                    "播放时长": duration_seconds,
+                    "封面图片": item.get("pic")
+                }
+                print(video_info)
+
+                save_to_db(video_info)
+
+            # 在每次爬取页面之间添加随机延时（避免封IP）
+            delay = random.uniform(0.75, 1.25)  # 随机延时 1 到 3 秒
+            print(f"Pausing for {delay:.2f} seconds to avoid rate limiting...")
+            time.sleep(delay)
 
 if __name__ == "__main__":
-    search_bilibili("健身气功", max_pages=25)
+    keywords = ["运动", "地理", "生活记录"]
+    search_bilibili_for_keywords(keywords)
