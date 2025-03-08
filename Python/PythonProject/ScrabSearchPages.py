@@ -101,10 +101,11 @@ def search_bilibili_for_keywords(keywords, max_pages=25):
                 save_to_db(video_info)
 
             # 在每次爬取页面之间添加随机延时（避免封IP）
-            delay = random.uniform(0.75, 1.25)  # 随机延时 1 到 3 秒
+            delay = random.uniform(0.75, 1.2)  # 随机延时 1 到 1.2 秒
             print(f"Pausing for {delay:.2f} seconds to avoid rate limiting...")
             time.sleep(delay)
 
 if __name__ == "__main__":
-    keywords = ["运动", "地理", "生活记录"]
+    keywords = ["LPL","世界赛","奥运会","人类","就业","经济",
+                "战争雷霆","学习"]
     search_bilibili_for_keywords(keywords)
