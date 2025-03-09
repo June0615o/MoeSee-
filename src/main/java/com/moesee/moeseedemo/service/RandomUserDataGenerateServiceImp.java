@@ -30,7 +30,7 @@ public class RandomUserDataGenerateServiceImp implements RandomUserDataGenerateS
 
     @Override
     public void generateRandomUserData() {
-        int numUsers = 10;
+        int numUsers = 10000;
         int initialUserId = 100000;
         Random random = new Random();
 
