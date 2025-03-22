@@ -1,43 +1,52 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
-from collections import Counter
-import matplotlib
-
-# 设置字体为 SimHei（黑体）以支持中文显示
-plt.rcParams['font.sans-serif'] = ['SimHei']
-plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
 
 # 创建数据库连接引擎
 engine = create_engine('mysql+pymysql://root:1234@localhost/db02')
 
-# 从数据库中读取视频标签数据
-data = pd.read_sql("SELECT video_tags FROM videos", engine)
+# 读取数据，只处理 video_cluster_id 为 -1 的视频
+data = pd.read_sql("SELECT video_id, video_title, video_tags FROM videos WHERE video_cluster_id = -1", engine)
 
-# 大聚类标签列表
-large_categories = ["综艺", "动画", "鬼畜", "舞蹈", "娱乐", "科技数码", "美食", "汽车",
-                    "体育运动", "电影", "电视剧", "纪录片", "游戏", "音乐", "影视", "知识",
-                    "资讯", "小剧场", "时尚美妆", "动物", "vlog", "绘画", "人工智能",
-                    "家装房产", "户外", "健身", "手工", "旅游出行", "三农", "亲子", "健康",
-                    "情感", "生活兴趣", "生活经验", "公益","必剪创作","生活"]
+# 检查数据是否为空
+if data.empty:
+    print("No data found with video_cluster_id = -1")
+else:
+    # 定义最新的大聚类标签和对应的ID
+    cluster_mapping = {
+        "综艺": 0, "动画": 1, "鬼畜": 2, "舞蹈": 3, "娱乐": 4, "科技数码": 5, "美食": 6, "汽车": 7,
+        "体育运动": 8, "电影": 9, "电视剧": 10, "纪录片": 11, "游戏": 12, "音乐": 13, "影视": 14, "知识": 15,
+        "资讯": 16, "小剧场": 17, "时尚美妆": 18, "动物": 19, "vlog": 20, "绘画": 21, "人工智能": 22,
+        "家装房产": 23, "户外": 24, "健身": 25, "手工": 26, "旅游出行": 27, "三农": 28, "亲子": 29,
+        "健康": 30, "情感": 31, "生活兴趣": 32, "生活经验": 33, "公益": 34
+    }
 
-# 分割标签并统计出现次数
-all_tags = []
-for tags in data['video_tags']:
-    all_tags.extend(tags.split(','))
+    # 自动映射逻辑
+    def classify_video(row):
+        title = row['video_title']  # 获取视频标题
+        tags = row['video_tags']   # 获取视频标签
+        for cluster_name, cluster_id in cluster_mapping.items():
+            # 检查标题或标签中是否包含聚类关键词
+            if cluster_name in title or cluster_name in tags:
+                return cluster_id  # 直接归类到对应的大聚类ID
+        return -1  # 默认值，未匹配任何大聚类
 
-# 筛除大聚类词
-filtered_tags = [tag for tag in all_tags if tag not in large_categories]
+    # 应用分类逻辑
+    data['video_cluster_id'] = data.apply(classify_video, axis=1)
 
-tag_counts = Counter(filtered_tags)
-
-# 选择出现次数较高的标签进行绘制
-most_common_tags = tag_counts.most_common(10)  # 可调整显示的标签数量
-labels, counts = zip(*most_common_tags)
-
-# 绘制饼图
-plt.figure(figsize=(10, 6))
-plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=140)
-plt.title('视频标签分布（筛除大聚类词）')
-plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-plt.show()
+    # 更新数据库
+    try:
+        connection = engine.raw_connection()
+        with connection.cursor() as cursor:
+            for index, row in data.iterrows():
+                sql = """
+                UPDATE videos
+                SET video_cluster_id = %s
+                WHERE video_id = %s
+                """
+                cursor.execute(sql, (row['video_cluster_id'], row['video_id']))
+            connection.commit()
+            print("Cluster results saved to database.")
+    except Exception as e:
+        print("Failed to save clusters to database:", e)
+    finally:
+        connection.close()
