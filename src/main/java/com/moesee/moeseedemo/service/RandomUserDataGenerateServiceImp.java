@@ -35,7 +35,7 @@ public class RandomUserDataGenerateServiceImp implements RandomUserDataGenerateS
         Random random = new Random();
 
         try (Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
-            String sql = "INSERT INTO users (user_uid, user_preferred_tags, user_behavior_history) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO users (user_uid, user_preferred_tags) VALUES (?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (int userId = 1; userId <= numUsers; userId++) {
                     int userUid = initialUserId + userId;
@@ -44,12 +44,11 @@ public class RandomUserDataGenerateServiceImp implements RandomUserDataGenerateS
 
                     pstmt.setInt(1, userUid);
                     pstmt.setString(2, preferredTags);
-                    pstmt.setInt(3, behaviorHistory);
 
                     pstmt.executeUpdate();
 
                     // 输出到控制台
-                    System.out.println("Inserted user_uid:" + userUid + " preferred_tags:" + preferredTags + " behavior_history:" + behaviorHistory);
+                    System.out.println("Inserted user_uid:" + userUid + " preferred_tags:" + preferredTags);
                 }
             }
         } catch (SQLException e) {

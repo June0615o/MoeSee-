@@ -24,12 +24,35 @@
             videos
         WHERE
             FIND_IN_SET(#{clusterId}, video_cluster_id)
-            AND video_url NOT LIKE CONCAT('%',#{videoUrl},'%')
+            AND (#{videoUrl} is NULL OR video_url NOT LIKE CONCAT('%',#{videoUrl},'%'))
         ORDER BY
             RAND()
         LIMIT
             #{limit}
     </select>
+
+    <insert id="insertViewHistory">
+        INSERT INTO view_history (user_id, video_id, date)
+        VALUES (#{userId}, #{videoId}, #{date})
+    </insert>
+
+    <insert id="insertLikeHistory">
+        INSERT INTO like_history (user_id, video_id, date)
+        VALUES (#{userId}, #{videoId}, #{date})
+    </insert>
+
+    <update id="incrementVideoViews">
+        UPDATE videos
+        SET video_views = video_views + 1
+        WHERE video_id = #{videoId}
+    </update>
+
+    <update id="incrementVideoLikes">
+        UPDATE videos
+        SET video_liked = video_liked + 1
+        WHERE video_id = #{videoId}
+    </update>
+
 
 
 </mapper>

@@ -5,16 +5,34 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface VideoMapper {
 
-
     int getVideoClusterIdByUrl(@Param("videoUrl") String videoUrl);
-
 
     List<Video> findVideosByClusterId (@Param("clusterId") Integer clusterId,
                                        @Param("videoUrl") String videoUrl,
                                        @Param("limit") Integer limit);
+
+    void insertViewHistory(@Param("userId") Integer userId,
+                           @Param("videoId") Integer videoId,
+                           @Param("date") LocalDate date);
+    void insertLikeHistory(@Param("userId") Integer userId,
+                           @Param("videoId") Integer videoId,
+                           @Param("date") LocalDate date);
+    /*
+
+    插入观看记录. 请注意使用时注意
+    调用下面incrementVideoViews方法将对应视频播放量字段video_views +1
+    插入点赞记录同理。
+
+    */
+
+
+    void incrementVideoViews(@Param("videoId") Integer videoId);
+    void incrementVideoLikes(@Param("videoId") Integer videoId);
 }
