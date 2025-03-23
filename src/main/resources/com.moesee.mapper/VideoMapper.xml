@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moesee.moeseedemo.mapper.VideoMapper">
+
+    <select id="getVideoClusterIdByUrl" resultType="int">
+        SELECT video_cluster_id AS videoClusterId
+        FROM videos
+        WHERE video_url LIKE CONCAT('%',#{videoUrl},'%')
+    </select>
+
+    <select id="findVideosByClusterId" resultType="com.moesee.moeseedemo.pojo.Video">
+        SELECT
+            video_id AS videoId,
+            video_title AS videoTitle,
+            video_tags AS videoTags,
+            video_url AS videoUrl,
+            video_views AS videoViews,
+            video_duration AS videoDuration,
+            video_cover_image AS videoCoverImage
+        FROM
+            videos
+        WHERE
+            FIND_IN_SET(#{clusterId}, video_cluster_id)
+            AND video_url NOT LIKE CONCAT('%',#{videoUrl},'%')
+        ORDER BY
+            RAND()
+        LIMIT
+            #{limit}
+    </select>
+
+
+</mapper>

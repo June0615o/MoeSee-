@@ -25,7 +25,7 @@ public interface UserMapper {
      * @param limit 返回用户数量限制
      * @return 相似用户列表
      */
-    @Select("SELECT * FROM users WHERE FIND_IN_SET(#{clusterId}, user_cluster_id) AND user_id != #{excludeUserId} LIMIT #{limit}")
+    @Select("SELECT * FROM users WHERE FIND_IN_SET(#{clusterId}, user_cluster_id) AND user_id != #{excludeUserId} ORDER BY RAND() LIMIT #{limit}")
     List<User> findUsersByClusterId(@Param("clusterId") Integer clusterId,
                                     @Param("excludeUserId") Integer excludeUserId,
                                     @Param("limit") Integer limit);

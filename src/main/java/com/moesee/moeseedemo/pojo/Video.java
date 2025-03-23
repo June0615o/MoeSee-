@@ -1,56 +1,86 @@
 package com.moesee.moeseedemo.pojo;
 
 public class Video {
-    private long aid;
-    private int duration;
-    private String title;
-    private String tname;     // 第一个标签，如“搞笑”
-    private String tnamev2;   // 第二个标签，如“剧情演绎”
-    private String short_link_v2; // 视频 URL
-    private Stat stat;        // 播放量信息
+    private int videoId;
+    private String videoTitle;
+    private String videoTags;
+    private String videoUrl;
+    private int videoViews;
+    private int videoLiked; // 视频 URL
+    private int videoDuration;
+    private String videoCoverImage;
+    private int videoClusterId;
 
-    // Getter 和 Setter
-    public long getAid() {
-        return aid;
+    public int getVideoId() {
+        return videoId;
     }
-    public void setAid(long aid) {
-        this.aid = aid;
+
+    public void setVideoId(int videoId) {
+        this.videoId = videoId;
     }
-    public int getDuration() {
-        return duration;
+
+    public String getVideoTitle() {
+        return videoTitle;
     }
-    public void setDuration(int duration) {
-        this.duration = duration;
+
+    public void setVideoTitle(String videoTitle) {
+        this.videoTitle = videoTitle;
     }
-    public String getTitle() {
-        return title;
+
+    public String getVideoTags() {
+        return videoTags;
     }
-    public void setTitle(String title) {
-        this.title = title;
+
+    public void setVideoTags(String videoTags) {
+        this.videoTags = videoTags;
     }
-    public String getTname() {
-        return tname;
+
+    public String getVideoUrl() {
+        return videoUrl;
     }
-    public void setTname(String tname) {
-        this.tname = tname;
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
-    public String getTnamev2() {
-        return tnamev2;
+
+    public int getVideoViews() {
+        return videoViews;
     }
-    public void setTnamev2(String tnamev2) {
-        this.tnamev2 = tnamev2;
+
+    public void setVideoViews(int videoViews) {
+        this.videoViews = videoViews;
     }
-    public String getShort_link_v2() {
-        return short_link_v2;
+
+    public int getVideoLiked() {
+        return videoLiked;
     }
-    public void setShort_link_v2(String short_link_v2) {
-        this.short_link_v2 = short_link_v2;
+
+    public void setVideoLiked(int videoLiked) {
+        this.videoLiked = videoLiked;
     }
-    public Stat getStat() {
-        return stat;
+
+    public int getVideoDuration() {
+        return videoDuration;
     }
-    public void setStat(Stat stat) {
-        this.stat = stat;
+
+    public void setVideoDuration(int videoDuration) {
+        this.videoDuration = videoDuration;
+    }
+
+    public String getVideoCoverImage() {
+        return videoCoverImage;
+    }
+
+    public void setVideoCoverImage(String videoCoverImage) {
+        this.videoCoverImage = videoCoverImage;
+    }
+
+    public int getVideoClusterId() {
+        return videoClusterId;
+    }
+
+    public void setVideoClusterId(int videoClusterId) {
+        this.videoClusterId = videoClusterId;
     }
 }
 
