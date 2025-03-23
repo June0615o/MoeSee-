@@ -2,10 +2,12 @@ package com.moesee.moeseedemo.service;
 
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.pojo.User;
+import com.moesee.moeseedemo.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendUserServiceImp implements RecommendUserService{
@@ -21,22 +23,19 @@ public class RecommendUserServiceImp implements RecommendUserService{
         }
 
         //解析聚类ID
-        Integer primaryClusterId=getPrimaryClusterId(userClusterId);
-        System.out.println("Parsed primaryClusterId: " + primaryClusterId);
+        List<Integer> clusterIds = ClusterUtils.parseClusterIds(userClusterId);
+        System.out.println("Parsed ClusterIds: " + clusterIds);
 
-        //查询相似用户
-        List<User> similarUsers=userMapper.findUsersByClusterId(primaryClusterId,userId,5);
-        System.out.println("ClusterId: " + primaryClusterId);
-        System.out.println("ExcludeUserId: " + userId);
-        System.out.println("Similar Users: " + similarUsers);
-        return similarUsers;
-    }
+        Set<User> recommendedUsers =new HashSet<>(); //因为去重性所以使用Set
 
-    public Integer getPrimaryClusterId(String userClusterId){
-        if(userClusterId==null||userClusterId.isEmpty()){
-            return null;
+        //对聚类ID列表中的每个，都查询4个相似用户
+        for (Integer clusterId : clusterIds) {
+            List<User> similarUsers = userMapper.findUsersByClusterId(clusterId, userId, 4);
+            System.out.println("ClusterId: " + clusterId);
+            System.out.println("ExcludeUserId: " + userId);
+            System.out.println("Similar Users: " + similarUsers);
+            recommendedUsers.addAll(similarUsers);
         }
-        String[] clusterIds = userClusterId.split(",");
-        return Integer.valueOf(clusterIds[0].trim());
+        return new ArrayList<>(recommendedUsers);
     }
 }
