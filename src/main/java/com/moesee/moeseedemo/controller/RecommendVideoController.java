@@ -19,7 +19,7 @@ public class RecommendVideoController {
     private RecommendVideoService recommendVideoService;
 
     @GetMapping("/recommendvideos")
-    public ResponseEntity<List<Video>> recommendVideos(@RequestParam String videoUrl){
+    public ResponseEntity<List<Video>> recommendVideos(@RequestParam String videoUrl ){ //bv号
         List<Video> recommendedVideos = recommendVideoService.findRecommendVideos(videoUrl);
         return ResponseEntity.ok(recommendedVideos);
     }

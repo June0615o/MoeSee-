@@ -14,6 +14,8 @@ public class MoeSeeDemoApplicationTests {
 
     @Test
     public void contextLoads() {
-        mockUserWatchingService.mockUserWatching();
+        for( int i=0; i<500 ; i++){
+            mockUserWatchingService.mockUserWatching();
+        }
     }
 }

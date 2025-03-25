@@ -5,6 +5,15 @@
 
 <mapper namespace="com.moesee.moeseedemo.mapper.VideoMapper">
 
+    <select id="getVideoIdByUrl" resultType="int">
+        SELECT
+            video_id AS videoId
+        FROM
+            videos
+        WHERE
+            video_url LIKE CONCAT('%',#{videoUrl},'%')
+    </select>
+
     <select id="getVideoClusterIdByUrl" resultType="int">
         SELECT video_cluster_id AS videoClusterId
         FROM videos
@@ -29,6 +38,25 @@
             RAND()
         LIMIT
             #{limit}
+    </select>
+
+    <select id="getVideoViewsByVideoIdAndDate" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            view_history
+        WHERE
+            video_id = #{videoId}
+            AND date = #{date}
+    </select>
+    <select id="getVideoLikesByVideoIdAndDate" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            like_history
+        WHERE
+            video_id = #{videoId}
+            AND date = #{date}
     </select>
 
     <insert id="insertViewHistory">

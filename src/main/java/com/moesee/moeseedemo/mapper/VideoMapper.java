@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper
 public interface VideoMapper {
 
+    int getVideoIdByUrl(@Param("videoUrl") String videoUrl);
     int getVideoClusterIdByUrl(@Param("videoUrl") String videoUrl);
 
     List<Video> findVideosByClusterId (@Param("clusterId") Integer clusterId,
@@ -32,7 +33,11 @@ public interface VideoMapper {
 
     */
 
-
     void incrementVideoViews(@Param("videoId") Integer videoId);
     void incrementVideoLikes(@Param("videoId") Integer videoId);
+
+    int getVideoViewsByVideoIdAndDate(@Param("videoId") Integer videoId,
+                                      @Param("date")LocalDate date);
+    int getVideoLikesByVideoIdAndDate(@Param("videoId") Integer videoId,
+                                      @Param("date")LocalDate date);
 }

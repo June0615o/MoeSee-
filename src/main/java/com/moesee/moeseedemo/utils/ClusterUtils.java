@@ -1,5 +1,7 @@
 package com.moesee.moeseedemo.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
    可以使用for的加强循环来遍历或获得对应的聚类id.
 */
 
+@Component
 public class ClusterUtils {
     public static List<Integer> parseClusterIds(String userClusterId) {
         if (userClusterId == null || userClusterId.isEmpty()) {
