@@ -1,6 +1,7 @@
 package com.moesee.moeseedemo.mapper;
 
 import com.moesee.moeseedemo.pojo.Video;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -8,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface VideoMapper {
@@ -40,4 +42,9 @@ public interface VideoMapper {
                                       @Param("date")LocalDate date);
     int getVideoLikesByVideoIdAndDate(@Param("videoId") Integer videoId,
                                       @Param("date")LocalDate date);
+
+    List<Integer> getLikedVideosByUserId(@Param("userId") Integer userId);
+
+    Video getVideoDetailsById(@Param("videoId") Integer videoId);
+
 }

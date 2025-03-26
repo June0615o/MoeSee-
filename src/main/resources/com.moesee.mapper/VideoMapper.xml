@@ -59,6 +59,36 @@
             AND date = #{date}
     </select>
 
+    <select id="getLikedVideosByUserId" resultType="int">
+        SELECT DISTINCT
+            video_id
+        FROM
+            like_history
+        WHERE
+            user_id = #{userId}
+    </select>
+
+
+    <select id="getVideoDetailsById" resultType="com.moesee.moeseedemo.pojo.Video">
+        SELECT
+            video_id AS videoId,
+            video_title AS videoTitle,
+            video_tags AS videoTags,
+            video_url AS videoUrl,
+            video_views AS videoViews,
+            video_liked AS videoLiked,
+            video_duration AS videoDuration,
+            video_cover_image AS videoCoverImage,
+            video_cluster_id AS videoClusterId
+        FROM
+            videos
+        WHERE
+            video_id = #{videoId}
+    </select>
+
+
+
+
     <insert id="insertViewHistory">
         INSERT INTO view_history (user_id, video_id, date)
         VALUES (#{userId}, #{videoId}, #{date})

@@ -18,6 +18,11 @@ public interface UserMapper {
     @Select("SELECT user_cluster_id FROM users WHERE user_id = #{userId}")
     String getUserClusterIdById(int userId);
 
+    @Select("SELECT user_id FROM users WHERE user_uid= #{userUid}")
+    int getUserIdByUid(int userUid);
+    @Select("SELECT user_cluster_id FROM users WHERE user_uid = #{userUid}")
+    String getUserClusterIdByUid(int userUid);
+
     /**
      * 根据聚类ID查找相似用户
      * @param clusterId 当前用户聚类ID
@@ -30,5 +35,10 @@ public interface UserMapper {
                                     @Param("excludeUserId") Integer excludeUserId,
                                     @Param("limit") Integer limit);
 
+    List<Integer> getUsersByExactClusterIds(@Param("clusterIds")List<Integer> clusterIds,
+                                            @Param("excludeUserId")Integer excludeUserId);
+
+    List<Integer> getUsersByClusterId(@Param("clusterId")Integer clusterId,
+                                      @Param("excludeUserId")Integer excludeUserId);
 }
 
