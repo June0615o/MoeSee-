@@ -15,6 +15,7 @@ public interface UserMapper {
      * @param userId 用户ID
      * @return 用户聚类ID
      */
+
     @Select("SELECT user_cluster_id FROM users WHERE user_id = #{userId}")
     String getUserClusterIdById(int userId);
 
@@ -35,10 +36,16 @@ public interface UserMapper {
                                     @Param("excludeUserId") Integer excludeUserId,
                                     @Param("limit") Integer limit);
 
+    int getMaxUserUid();
+
     List<Integer> getUsersByExactClusterIds(@Param("clusterIds")List<Integer> clusterIds,
                                             @Param("excludeUserId")Integer excludeUserId);
 
     List<Integer> getUsersByClusterId(@Param("clusterId")Integer clusterId,
                                       @Param("excludeUserId")Integer excludeUserId);
+
+    void registerUser(@Param("userUid")Integer userUid,
+                     @Param("userPreferredTags")String userPreferredTags,
+                     @Param("userClusterIds")String userClusterIds);
 }
 

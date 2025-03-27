@@ -5,6 +5,11 @@
 
 <mapper namespace="com.moesee.moeseedemo.mapper.UserMapper">
 
+    <select id="getMaxUserUid" resultType="int">
+        SELECT MAX(user_uid)
+        FROM users
+    </select>
+
     <select id="getUsersByExactClusterIds" resultType="int">
         SELECT user_id
         FROM users
@@ -22,6 +27,12 @@
         WHERE FIND_IN_SET(#{clusterId},user_cluster_id)
               AND user_id != #{excludeUserId}
     </select>
+
+    <insert id="registerUser">
+        INSERT INTO
+            users(user_uid,user_preferred_tags,user_cluster_id)
+        VALUES (#{userUid},#{userPreferredTags},#{userClusterIds})
+    </insert>
 
 
 
