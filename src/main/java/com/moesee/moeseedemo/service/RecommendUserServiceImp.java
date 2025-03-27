@@ -16,7 +16,8 @@ public class RecommendUserServiceImp implements RecommendUserService{
     private UserMapper userMapper;
 
     @Override
-    public List<User> findRecommendedUsers(int userId) {
+    public List<User> findRecommendedUsers(int userUid) {
+        int userId=userMapper.getUserIdByUid(userUid);
         String userClusterId=userMapper.getUserClusterIdById(userId);
         if(userClusterId==null){
             throw new IllegalArgumentException("用户聚类ID不存在");

@@ -68,6 +68,7 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
     }
     private List<Integer> getVideosFromSimilarUsers(List<Integer> similarUsersforRecommend , Set<Integer> processedUsers){
         List<Integer> videoIds=new ArrayList<>();
+        Collections.shuffle(similarUsersforRecommend);
         for(Integer similarUserId:similarUsersforRecommend) {
             if(videoIds.size()>=4) break;
             if (processedUsers.contains(similarUserId)) continue;

@@ -19,8 +19,8 @@ public class RecommendUserController {
     private RecommendUserService recommendUserService;
 
     @GetMapping("/recommendusers")
-    public ResponseEntity<List<User>> recommendUsers(@RequestParam int userId){
-        List<User> recommendedUsers = recommendUserService.findRecommendedUsers(userId);
+    public ResponseEntity<List<User>> recommendUsers(@RequestParam int userUid){
+        List<User> recommendedUsers = recommendUserService.findRecommendedUsers(userUid);
         return ResponseEntity.ok(recommendedUsers);
     }
 }
