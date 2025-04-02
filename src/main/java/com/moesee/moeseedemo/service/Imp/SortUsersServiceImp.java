@@ -1,5 +1,6 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
+import com.moesee.moeseedemo.service.SortUsersService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.*;
 
 @Service
-public class SortUsersServiceImp implements SortUsersService{
+public class SortUsersServiceImp implements SortUsersService {
 
     @Value("${spring.datasource.url}")
     private String dbUrl;

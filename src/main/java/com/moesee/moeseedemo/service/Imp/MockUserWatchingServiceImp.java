@@ -1,11 +1,10 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
-import ch.qos.logback.core.joran.conditional.ElseAction;
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.service.MockUserWatchingService;
 import com.moesee.moeseedemo.utils.ClusterUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-public class MockUserWatchingServiceImp implements MockUserWatchingService{
+public class MockUserWatchingServiceImp implements MockUserWatchingService {
 
     @Autowired
     private UserMapper userMapper;
@@ -23,7 +22,7 @@ public class MockUserWatchingServiceImp implements MockUserWatchingService{
     private VideoMapper videoMapper;
 
     @Autowired
-    private FindVideosByClusterIdRandomlyWeighted FindVideosByClusterIdRandomlyWeighted;
+    private com.moesee.moeseedemo.service.FindVideosByClusterIdRandomlyWeighted FindVideosByClusterIdRandomlyWeighted;
 
     private Random random = new Random();
     @Override

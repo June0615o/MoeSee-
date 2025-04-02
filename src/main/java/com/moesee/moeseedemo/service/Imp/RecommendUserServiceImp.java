@@ -1,16 +1,16 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.pojo.User;
+import com.moesee.moeseedemo.service.RecommendUserService;
 import com.moesee.moeseedemo.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class RecommendUserServiceImp implements RecommendUserService{
+public class RecommendUserServiceImp implements RecommendUserService {
 
     @Autowired
     private UserMapper userMapper;

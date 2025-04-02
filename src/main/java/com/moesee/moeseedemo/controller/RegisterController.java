@@ -1,6 +1,7 @@
 package com.moesee.moeseedemo.controller;
 
 
+import com.moesee.moeseedemo.dto.RegisterDTO;
 import com.moesee.moeseedemo.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class RegisterController {
     private RegisterService registerService;
 
     @PostMapping
-    public ResponseEntity<String> registerUser(@RequestBody List<Integer> clusterIds){
-        int userUid=registerService.registerUser(clusterIds);
-        return ResponseEntity.ok("userUid:"+userUid);
+    public ResponseEntity<RegisterDTO> registerUser(@RequestBody List<Integer> clusterIds){
+        RegisterDTO registerDTO=registerService.registerUser(clusterIds);
+        return ResponseEntity.ok(registerDTO);
     }
 }

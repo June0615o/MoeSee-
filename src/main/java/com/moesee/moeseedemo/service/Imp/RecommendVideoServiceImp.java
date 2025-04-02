@@ -1,14 +1,15 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.service.RecommendVideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RecommendVideoServiceImp implements RecommendVideoService{
+public class RecommendVideoServiceImp implements RecommendVideoService {
 
     @Autowired
     private VideoMapper videoMapper;

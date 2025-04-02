@@ -1,8 +1,9 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.service.RecommendVideoForUserService;
 import com.moesee.moeseedemo.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class RecommendVideoForUserServiceImp implements RecommendVideoForUserService{
+public class RecommendVideoForUserServiceImp implements RecommendVideoForUserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -20,7 +21,7 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
     private VideoMapper videoMapper;
 
     @Override
-    public List<Map<String,Object>> recommendVideosForUser(Integer userUid){
+    public List<Map<String,Object>> recommendVideosForUser(Integer userUid,int count){
         int userId=userMapper.getUserIdByUid(userUid);
         String userClusterId=userMapper.getUserClusterIdById(userId);
         List<Integer> clusterIds = clusterUtils.parseClusterIds(userClusterId);
@@ -36,14 +37,14 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
          */
 
         List<Integer> similarUsersforRecommend = userMapper.getUsersByExactClusterIds(clusterIds,userId);
-        recommendVideoIds.addAll(getVideosFromSimilarUsers(similarUsersforRecommend,processedUsers));
+        recommendVideoIds.addAll(getVideosFromSimilarUsers(similarUsersforRecommend,processedUsers,count));
 
-        //如果未能满足完全一致的聚类ID相似需求且推荐视频列表少于4，逐步降低匹配标准
-        if (recommendVideoIds.size()<4){
+        //如果未能满足完全一致的聚类ID相似需求且推荐视频列表少于count(所需)，逐步降低匹配标准
+        if (recommendVideoIds.size()<count){
             for(Integer clusterId:clusterIds) {
                 similarUsersforRecommend = userMapper.getUsersByClusterId(clusterId, userId);
-                recommendVideoIds.addAll(getVideosFromSimilarUsers(similarUsersforRecommend, processedUsers));
-                if (recommendVideoIds.size() >= 4) break;
+                recommendVideoIds.addAll(getVideosFromSimilarUsers(similarUsersforRecommend, processedUsers,count));
+                if (recommendVideoIds.size() >= count) break;
             }
         }
         List<Map<String,Object>> recommendVideoDetails =new ArrayList<>();
@@ -66,11 +67,11 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
         }
         return recommendVideoDetails;
     }
-    private List<Integer> getVideosFromSimilarUsers(List<Integer> similarUsersforRecommend , Set<Integer> processedUsers){
+    private List<Integer> getVideosFromSimilarUsers(List<Integer> similarUsersforRecommend , Set<Integer> processedUsers,int count){
         List<Integer> videoIds=new ArrayList<>();
         Collections.shuffle(similarUsersforRecommend);
         for(Integer similarUserId:similarUsersforRecommend) {
-            if(videoIds.size()>=4) break;
+            if(videoIds.size()>=count) break;
             if (processedUsers.contains(similarUserId)) continue;
             List<Integer> likedVideos = videoMapper.getLikedVideosByUserId(similarUserId);
             for (Integer videoId : likedVideos) {
@@ -78,11 +79,11 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
                     videoIds.add(videoId);
                     System.out.println("!*调试语句*! video_id:"+videoId+"已存入videoIds中.");
                     System.out.println("!*调试语句*! 目前的videoIds长度为:"+videoIds.size());
-                    if (videoIds.size() >= 4) break;
+                    if (videoIds.size() >= count) break;
                 }
             }
             processedUsers.add(similarUserId);
-            if(videoIds.size()>=4) break;
+            if(videoIds.size()>=count) break;
         }
         return videoIds;
     }

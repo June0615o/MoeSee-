@@ -1,5 +1,6 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
+import com.moesee.moeseedemo.service.AnalyticsService;
 import com.moesee.moeseedemo.utils.DateUtils;
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class AnalyticsServiceImp implements AnalyticsService{
+public class AnalyticsServiceImp implements AnalyticsService {
 
     @Autowired
     private VideoMapper videoMapper;
@@ -38,9 +39,9 @@ public class AnalyticsServiceImp implements AnalyticsService{
         return result;
     }
     private double calculateHeat(int views,int likes,int days){
-        final double a = 0.7; //播放量权重
-        final double b = 0.8; //点赞量权重
-        final double c = 0.1; //时间衰减系数
+        final double a = 7; //播放量权重
+        final double b = 8; //点赞量权重
+        final double c = 1; //时间衰减系数
         return a*Math.log(views +1)+b*Math.log(likes+1)-c*days;
     }
 

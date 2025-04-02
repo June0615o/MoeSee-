@@ -1,5 +1,6 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
+import com.moesee.moeseedemo.service.RandomUserDataGenerateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

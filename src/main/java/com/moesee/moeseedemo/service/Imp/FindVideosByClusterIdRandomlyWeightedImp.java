@@ -1,7 +1,8 @@
-package com.moesee.moeseedemo.service;
+package com.moesee.moeseedemo.service.Imp;
 
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.service.FindVideosByClusterIdRandomlyWeighted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
