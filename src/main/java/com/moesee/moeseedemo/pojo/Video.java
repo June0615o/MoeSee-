@@ -10,6 +10,24 @@ public class Video {
     private int videoDuration;
     private String videoCoverImage;
     private int videoClusterId;
+    private int videoFutureViews;
+    private double videoHeat;
+
+    public int getVideoFutureViews() {
+        return videoFutureViews;
+    }
+
+    public void setVideoFutureViews(int videoFutureView) {
+        this.videoFutureViews = videoFutureView;
+    }
+
+    public double getVideoHeat() {
+        return videoHeat;
+    }
+
+    public void setVideoHeat(double videoHeat) {
+        this.videoHeat = videoHeat;
+    }
 
     public int getVideoId() {
         return videoId;

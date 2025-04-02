@@ -3,11 +3,14 @@ package com.moesee.moeseedemo.service.Imp;
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.service.AnalyticsService;
 import com.moesee.moeseedemo.service.RecommendVideoForUserService;
 import com.moesee.moeseedemo.utils.ClusterUtils;
+import com.moesee.moeseedemo.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -19,6 +22,10 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
     private ClusterUtils clusterUtils;
     @Autowired
     private VideoMapper videoMapper;
+    @Autowired
+    private AnalyticsService analyticsService;
+    @Autowired
+    private DateUtils dateUtils;
 
     @Override
     public List<Map<String,Object>> recommendVideosForUser(Integer userUid,int count){
@@ -48,8 +55,14 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
             }
         }
         List<Map<String,Object>> recommendVideoDetails =new ArrayList<>();
+        LocalDate localDate = LocalDate.now();
+        String dateStr = dateUtils.localDateToString(localDate);
         for(Integer videoId:recommendVideoIds){
             Video videoDetails =videoMapper.getVideoDetailsById(videoId);
+            String videoUrl = videoDetails.getVideoUrl();
+            Map<String,Object> analyzeResult = analyticsService.analyzeVideoHeat(videoUrl,dateStr);
+            videoDetails.setVideoHeat((double)analyzeResult.get("futureHeat:"));
+            videoDetails.setVideoFutureViews((int)analyzeResult.get("futureViews:"));
             System.out.println("调试：视频详细信息 -> " + videoDetails);
             if (videoDetails != null) {
                 if (videoDetails.getVideoTitle() != null &&
@@ -57,8 +70,10 @@ public class RecommendVideoForUserServiceImp implements RecommendVideoForUserSer
                         videoDetails.getVideoCoverImage() != null) {
                     Map<String, Object> videoDetailMap = new HashMap<>();
                     videoDetailMap.put("videoTitle", videoDetails.getVideoTitle());
-                    videoDetailMap.put("videoUrl", videoDetails.getVideoUrl());
+                    videoDetailMap.put("videoUrl", videoUrl);
                     videoDetailMap.put("videoCoverImage", videoDetails.getVideoCoverImage());
+                    videoDetailMap.put("videoFutureViews",videoDetails.getVideoFutureViews());
+                    videoDetailMap.put("videoHeat",videoDetails.getVideoHeat());
                     recommendVideoDetails.add(videoDetailMap);
                 } else {
                     System.out.println("警告：视频详细信息包含 null 值，视频 ID：" + videoId);

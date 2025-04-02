@@ -41,7 +41,7 @@ public class AnalyticsServiceImp implements AnalyticsService {
     private double calculateHeat(int views,int likes,int days){
         final double a = 7; //播放量权重
         final double b = 8; //点赞量权重
-        final double c = 1; //时间衰减系数
+        final double c = 0.2;//时间衰减系数
         return a*Math.log(views +1)+b*Math.log(likes+1)-c*days;
     }
 
