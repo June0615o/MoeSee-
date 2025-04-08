@@ -20,6 +20,12 @@ public class RecommendController {
 
     @GetMapping("/recommend")
     public ResponseEntity<List<Map<String,Object>>> recommendVideos(@RequestParam Integer userUid){
+        List<Map<String,Object>> recommendedVideos= recommendVideoForUserService.recommendVideosForUser(userUid,4);
+        return ResponseEntity.ok(recommendedVideos);
+    }
+
+    @GetMapping("/firstrecommend")
+    public ResponseEntity<List<Map<String,Object>>> firstRecommendVideos(@RequestParam Integer userUid){
         List<Map<String,Object>> recommendedVideos= recommendVideoForUserService.recommendVideosForUser(userUid,16);
         return ResponseEntity.ok(recommendedVideos);
     }

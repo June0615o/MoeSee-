@@ -1,0 +1,119 @@
+body{
+    margin:0;
+    padding:0;
+}
+.home{
+
+    margin:none;
+    display:flex;
+    height:100%;
+    width:100%;
+    background-color: #05cfc1ed;
+    flex-direction:column;
+    
+    /* &::after {
+        content: "";
+        display: block;
+        width:85vw;
+        height: 30vh; 
+        background-color: black; 
+        position: absolute; 
+        top:30%;
+        left: 50%; 
+        transform: translateX(-50%); 
+        border-radius: 3px; 
+    } */
+    .title{
+        font-family: "ZCOOL QingKe HuangYou", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size:4vw;
+        text-align:center;
+        box-sizing:border-box;
+        margin-top:6vh;
+        margin-bottom:5vh;
+        color:dark;
+        letter-spacing: 15px;
+        z-index:1;
+    }
+    .btnList{
+        display:flex;
+        flex-wrap: wrap;
+        justify-content:center;
+        align-items:center;
+    }
+    .card{
+        
+        width:48vw;
+        display:flex;
+        justify-content: space-between;
+        align-items:center;
+        text-align: center;
+        border:none;
+        flex-wrap: wrap;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* 增强阴影 */
+        background-color:#dadbf1;
+
+        .btn{
+            font-family: "ZCOOL QingKe HuangYou", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            box-sizing:border-box;
+            letter-spacing: 3px;
+            margin: 1vw;
+            border:none;
+            background-color:darkcyan;
+            color:white;
+            font-size:1vw;
+            border-radius: 10px;
+            padding:1vw 2vw;
+            transition: all 0.3s ease-in-out;
+            width:6.5vw;
+            box-shadow: 0 4px 13px rgba(244, 244, 244, 0.3);
+            
+
+            .btn:hover{
+                transform: scale(1.1);
+                box-shadow: 0 4px 13px rgba(0, 0, 0, 0.3);
+            }
+
+            
+        }
+            
+            
+           
+    }
+    
+    .submit{
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        text-align: center;
+        border:none;
+        flex-wrap: wrap;
+        margin-top:5vh;
+        
+        
+        .btn{
+            
+            font-family: "ZCOOL QingKe HuangYou", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            box-sizing:border-box;
+            letter-spacing: 3px;
+            margin: 1vw;
+            border:none;
+            background-color:darkred;
+            color:white;
+            font-size:1.9vw;
+            border-radius: 10px;
+            padding:2vw 3vw;
+            transition: all 0.3s ease-in-out;
+            width:8vw;
+            height:4vh;
+            box-shadow: 0 4px 13px rgba(244, 244, 244, 0.3);
+        }
+    }
+}
+        
+
