@@ -49,7 +49,7 @@ export default function Video() {
    }
    //视频换一批
    const refreshDisplayVideos= async()=>{
-    const responseVideo = await getFirstRecommendVideos(uid);
+    const responseVideo = await getRecommendVideos(uid);
     const videoList = responseVideo;
     setDisplayVideos(videoList);
     console.log(displayVideos)
