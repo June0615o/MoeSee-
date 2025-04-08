@@ -21,8 +21,23 @@ export const getRecommendUser = (uid) => {
     });
 }*/
 
-//获取视频数据 新版
+//第一次获取视频数据 新版
 
+export const getFirstRecommendVideos = async (userUid) => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/firstrecommend', {
+      params: {
+        userUid: userUid
+      }
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('获取推荐用户失败:', error);
+  }
+};
+
+//换一批
 export const getRecommendVideos = async (userUid) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommend', {
@@ -36,7 +51,6 @@ export const getRecommendVideos = async (userUid) => {
     console.error('获取推荐用户失败:', error);
   }
 };
-
 //获取用户数据
 
 export const getRecommendUser = async (userUid) => {

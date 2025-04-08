@@ -4,7 +4,7 @@ import {useState,useEffect} from "react"
 import { SyncOutlined ,FireFilled,FireTwoTone,UserOutlined} from "@ant-design/icons";
 import { Carousel,Card,Button,FloatButton,} from 'antd';
 import { useLocation } from "react-router";
-import { getRecommendVideos,getRecommendUser } from "../../mock/api";
+import { getRecommendVideos,getRecommendUser,getFirstRecommendVideos } from "../../mock/api";
 import './video.css'
 
 export default function Video() {
@@ -49,10 +49,9 @@ export default function Video() {
    }
    //视频换一批
    const refreshDisplayVideos= async()=>{
-    const responseVideo = await getRecommendVideos(uid);
+    const responseVideo = await getFirstRecommendVideos(uid);
     const videoList = responseVideo;
-    const shuffled = [...videoList].sort(() => 0.5 - Math.random());
-    setDisplayVideos(shuffled.slice(0, 4));
+    setDisplayVideos(videoList);
     console.log(displayVideos)
    }
    //用户换一批
