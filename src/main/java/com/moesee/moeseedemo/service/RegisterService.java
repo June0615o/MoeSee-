@@ -5,5 +5,5 @@ import com.moesee.moeseedemo.dto.RegisterDTO;
 import java.util.List;
 
 public interface RegisterService {
-    RegisterDTO registerUser(List<Integer> clusterIds);
+    int registerUser(List<Integer> clusterIds);
 }

@@ -21,8 +21,8 @@ public class RegisterController {
     private RegisterService registerService;
 
     @PostMapping
-    public ResponseEntity<RegisterDTO> registerUser(@RequestBody List<Integer> clusterIds){
-        RegisterDTO registerDTO=registerService.registerUser(clusterIds);
-        return ResponseEntity.ok(registerDTO);
+    public ResponseEntity<Integer> registerUser(@RequestBody List<Integer> clusterIds){
+        int userUid=registerService.registerUser(clusterIds);
+        return ResponseEntity.ok(userUid);
     }
 }

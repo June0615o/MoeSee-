@@ -28,7 +28,7 @@ public class RegisterServiceImp implements RegisterService {
     private RecommendUserService recommendUser;
 
     @Override
-    public RegisterDTO registerUser(List<Integer> clusterIds) {
+    public int registerUser(List<Integer> clusterIds) {
         String userClusterId = clusterIds.stream()
                 .map(String::valueOf) // 将 Integer 转换为 String
                 .collect(Collectors.joining(",")); // 以逗号拼接
@@ -40,11 +40,15 @@ public class RegisterServiceImp implements RegisterService {
         int userUid = userMapper.getMaxUserUid() + 1;
         userMapper.registerUser(userUid, userPreferredTags, userClusterId);
         System.out.println("用户注册成功,uid为"+userUid);
+        /*
         System.out.println("正在推荐首次访问所需的16个推荐视频以及4个用户");
+
         List<Map<String,Object>> recommendedVideos=recommendVideoForUserService.recommendVideosForUser(userUid,16);
         List<User> recommendedUsers=recommendUser.findRecommendedUsers(userUid);
         RegisterDTO registerDTO=new RegisterDTO(userUid,recommendedVideos,recommendedUsers);
 
         return registerDTO;
+        */
+        return userUid;
     }
 }

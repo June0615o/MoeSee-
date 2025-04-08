@@ -20,7 +20,7 @@ public class RecommendController {
 
     @GetMapping("/recommend")
     public ResponseEntity<List<Map<String,Object>>> recommendVideos(@RequestParam Integer userUid){
-        List<Map<String,Object>> recommendedVideos= recommendVideoForUserService.recommendVideosForUser(userUid,4);
+        List<Map<String,Object>> recommendedVideos= recommendVideoForUserService.recommendVideosForUser(userUid,16);
         return ResponseEntity.ok(recommendedVideos);
     }
 }
