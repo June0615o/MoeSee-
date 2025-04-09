@@ -21,6 +21,8 @@ public interface UserMapper {
 
     @Select("SELECT user_id FROM users WHERE user_uid= #{userUid}")
     int getUserIdByUid(int userUid);
+    @Select("SELECT user_uid FROM users WHERE user_id = #{userId}")
+    int getUserUidById(int userId);
     @Select("SELECT user_cluster_id FROM users WHERE user_uid = #{userUid}")
     String getUserClusterIdByUid(int userUid);
 

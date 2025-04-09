@@ -3,6 +3,7 @@ package com.moesee.moeseedemo.service.Imp;
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.mapper.VideoMapper;
 import com.moesee.moeseedemo.pojo.Video;
+import com.moesee.moeseedemo.redis.UserRedisRepository;
 import com.moesee.moeseedemo.service.MockUserWatchingService;
 import com.moesee.moeseedemo.utils.ClusterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,14 @@ public class MockUserWatchingServiceImp implements MockUserWatchingService {
     @Autowired
     private com.moesee.moeseedemo.service.FindVideosByClusterIdRandomlyWeighted FindVideosByClusterIdRandomlyWeighted;
 
+    @Autowired
+    private UserRedisRepository userRedisRepository;
+
     private Random random = new Random();
     @Override
     public void mockUserWatching() {
         int userId = generateRandomUserId();
+        int userUid = userId+100000-1;
         String userClusterId=userMapper.getUserClusterIdById(userId);
 
         if (userClusterId == null || userClusterId.isEmpty()) {
@@ -60,6 +65,8 @@ public class MockUserWatchingServiceImp implements MockUserWatchingService {
         if(random.nextDouble()<generateLikeProbability()){
             videoMapper.incrementVideoLikes(selectedVideo.getVideoId());
             videoMapper.insertLikeHistory(userId, selectedVideo.getVideoId(), currentDate);
+            userRedisRepository.saveLikedVideoToRedis(userUid,selectedVideo.getVideoId());
+            userRedisRepository.saveVideoDetailsToRedis(selectedVideo,120L);
             System.out.println("用户此次点赞了视频.");
         }
         else{
