@@ -66,7 +66,7 @@ public class MockUserWatchingServiceImp implements MockUserWatchingService {
             videoMapper.incrementVideoLikes(selectedVideo.getVideoId());
             videoMapper.insertLikeHistory(userId, selectedVideo.getVideoId(), currentDate);
             userRedisRepository.saveLikedVideoToRedis(userUid,selectedVideo.getVideoId());
-            userRedisRepository.saveVideoDetailsToRedis(selectedVideo,120L);
+            userRedisRepository.saveVideoDetailsToRedis(selectedVideo,20L);
             System.out.println("用户此次点赞了视频.");
         }
         else{

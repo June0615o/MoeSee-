@@ -26,10 +26,10 @@ public class AnalyticsServiceImp implements AnalyticsService {
         }
         LocalDate date = dateUtils.stringToLocalDate(dateStr);
         //获取最近一周的播放量和点赞量 并且计算出下周预期播放量和周热度
-        int lastWeekViews=predictPastDaysViews(videoId,date,3);
-        int lastWeekLikes=predictPastDaysLikes(videoId,date,3);
+        int lastWeekViews=predictPastDaysViews(videoId,date,7);
+        int lastWeekLikes=predictPastDaysLikes(videoId,date,7);
         int futureViews = lastWeekViews;
-        double heat = calculateHeat(lastWeekViews,lastWeekLikes,3);
+        double heat = calculateHeat(lastWeekViews,lastWeekLikes,7);
 
         Map<String,Object> result=new HashMap<>();
         result.put("videoId:", videoId);
@@ -39,9 +39,9 @@ public class AnalyticsServiceImp implements AnalyticsService {
         return result;
     }
     private double calculateHeat(int views,int likes,int days){
-        final double a = 7; //播放量权重
-        final double b = 8; //点赞量权重
-        final double c = 0.2;//时间衰减系数
+        final double a = 20; //播放量权重
+        final double b = 50; //点赞量权重
+        final double c = 0.1;//时间衰减系数
         return a*Math.log(views +1)+b*Math.log(likes+1)-c*days;
     }
 
