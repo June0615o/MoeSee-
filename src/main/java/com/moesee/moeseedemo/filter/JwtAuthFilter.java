@@ -25,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/auth/login",
             "/api/auth/code",
             "/api/auth/mblogin",
+            "/api/auth/setPassword",
             "/api/register"
     );
 

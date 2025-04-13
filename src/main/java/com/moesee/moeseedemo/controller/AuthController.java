@@ -109,7 +109,7 @@ public class AuthController {
         else {
             return ResponseEntity.ok(Map.of(
                     "message","手机号未注册,请输入密码以完成注册.",
-                    "nextStep","/api/setPassword"
+                    "nextStep","/api/auth/setPassword"
             ));
         }
     }
