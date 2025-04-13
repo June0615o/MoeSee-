@@ -25,6 +25,8 @@ public interface UserMapper {
     int getUserUidById(int userId);
     @Select("SELECT user_cluster_id FROM users WHERE user_uid = #{userUid}")
     String getUserClusterIdByUid(int userUid);
+    @Select("SELECT user_id FROM user_account WHERE user_account = #{phone}")
+    Integer getUserIdByPhone(@Param("phone") String phone);
 
     /**
      * 根据聚类ID查找相似用户
@@ -40,6 +42,9 @@ public interface UserMapper {
 
     int getMaxUserUid();
 
+    void insertUserAccount(@Param("userAccount")String phone,
+                           @Param("userPassword")String password);
+
     List<Integer> getUsersByExactClusterIds(@Param("clusterIds")List<Integer> clusterIds,
                                             @Param("excludeUserId")Integer excludeUserId);
 
@@ -49,5 +54,8 @@ public interface UserMapper {
     void registerUser(@Param("userUid")Integer userUid,
                      @Param("userPreferredTags")String userPreferredTags,
                      @Param("userClusterIds")String userClusterIds);
+
+    int validateUser(@Param("userAccount")String userAccount,
+                     @Param("password")String userPassword);
 }
 

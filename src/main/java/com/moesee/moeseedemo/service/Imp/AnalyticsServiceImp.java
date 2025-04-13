@@ -42,7 +42,7 @@ public class AnalyticsServiceImp implements AnalyticsService {
         final double a = 20; //播放量权重
         final double b = 50; //点赞量权重
         final double c = 0.1;//时间衰减系数
-        return a*Math.log(views +1)+b*Math.log(likes+1)-c*days;
+        return a*Math.log(views +1)+b*Math.log(likes+1);
     }
 
     private int predictPastDaysViews(int videoId,LocalDate date,int days){

@@ -15,13 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/register")
+@RequestMapping("/api")
 public class RegisterController {
 
     @Autowired
     private RegisterService registerService;
 
-    @PostMapping
+
+
+    @PostMapping("/register")
     public ResponseEntity<Integer> registerUser(@RequestBody Object requestBody){
         List<Integer> clusterIds;
         if (requestBody instanceof Map) { // 处理 {tags: [1,5,9]} 格式

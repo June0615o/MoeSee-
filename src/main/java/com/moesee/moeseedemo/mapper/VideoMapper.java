@@ -47,4 +47,5 @@ public interface VideoMapper {
 
     Video getVideoDetailsById(@Param("videoId") Integer videoId);
 
+
 }
