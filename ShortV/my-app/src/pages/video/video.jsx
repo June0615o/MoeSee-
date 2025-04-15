@@ -113,7 +113,8 @@ export default function Video() {
                                     <div className="fire-container">
                                         <FireTwoTone className="fire" twoToneColor="#eb2f96" />
                                         <div className="tooltip">
-                                            当前视频热度：🔥🔥🔥
+                                            <div>未来7天播放量:{video.futureViews}</div>
+                                            <div>未来7天热度: {video.futureHeat}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -65,4 +65,21 @@ export const getRecommendUser = async (userUid) => {
   } catch (error) {
     console.error('获取推荐用户失败:', error);
   }
-};
+}
+
+//账号密码登录api
+export const accountLogin= async(account,password)=>{
+  try{
+    const response = await axios.get('http://localhost:8080/api/auth/login',{
+      params:{
+        userAccount:account,
+        password:password
+      }
+    })
+    console.log(response.data);
+    return response.data;
+  }catch(error){
+    console.error('登录失败:',error);
+  }
+}
+//发送验证码的api
