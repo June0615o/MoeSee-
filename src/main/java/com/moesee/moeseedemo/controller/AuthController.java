@@ -107,9 +107,11 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("token",token));
         }
         else {
+            boolean isSetup = false;
             return ResponseEntity.ok(Map.of(
                     "message","手机号未注册,请输入密码以完成注册.",
-                    "nextStep","/api/auth/setPassword"
+                    "nextStep","/api/auth/setPassword",
+                    "isSetup",isSetup
             ));
         }
     }
