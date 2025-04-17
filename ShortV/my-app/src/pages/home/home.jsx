@@ -36,8 +36,10 @@ export default function Home() {
         console.log(response.status)
         console.log(response)
         if (response.status === 200) {
-            const uid = response.data;
+            const uid = response.data.userUid;
+            const token= response.data.token;
             localStorage.setItem('uid', uid);
+            localStorage.setItem('token', token);
             console.log(uid)
             // 跳转到video页面，并传递uid
             navigate(`/video?uid=${uid}`);

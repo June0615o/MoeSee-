@@ -149,6 +149,7 @@ Mock.mock('/api/getRecommendUser', 'post', (options) => {
 });
 */
 import Mock from 'mockjs';
+/*
 //拦截用户密码登录api
 Mock.mock('http://localhost:8080/api/auth/login', 'post', (option) => {
     const { params } = JSON.parse(option.body);  // 解构 params
@@ -188,3 +189,4 @@ Mock.mock('http://localhost:8080/api/auth/setPassword', 'post', (option) => {
        nextStep: "/api/register"
     }
 });
+*/

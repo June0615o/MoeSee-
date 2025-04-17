@@ -40,6 +40,7 @@ public class AuthController {
         stringRedisTemplate.opsForValue().set(redisKey,token, Duration.ofDays(1));
         //返回令牌
         Map<String,String> response = new HashMap<>();
+        response.put("userUid",userUid.toString());
         response.put("token",token);
         return ResponseEntity.ok(response);
     }
@@ -71,7 +72,7 @@ public class AuthController {
         stringRedisTemplate.expire(redisKey,Duration.ofMinutes(5));
         System.out.println("验证码已发送:"+code);
 
-        return ResponseEntity.ok("验证码已发送,"+code);
+        return ResponseEntity.ok(code);
     }
     @PostMapping("/mblogin")
     public ResponseEntity<?> mblogin(@RequestBody Map<String,String> request){

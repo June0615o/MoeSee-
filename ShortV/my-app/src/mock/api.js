@@ -23,12 +23,12 @@ export const getRecommendUser = (uid) => {
 
 //第一次获取视频数据 新版
 
-export const getFirstRecommendVideos = async (userUid) => {
+export const getFirstRecommendVideos = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/firstrecommend', {
-      params: {
+        token:token,
         userUid: userUid
-      }
+      
     });
     console.log(response.data);
     return response.data;
@@ -38,12 +38,11 @@ export const getFirstRecommendVideos = async (userUid) => {
 };
 
 //换一批
-export const getRecommendVideos = async (userUid) => {
+export const getRecommendVideos = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommend', {
-      params: {
+        token:token,
         userUid: userUid
-      }
     });
     console.log(response.data);
     return response.data;
@@ -52,12 +51,11 @@ export const getRecommendVideos = async (userUid) => {
   }
 };
 //获取用户数据
-export const getRecommendUser = async (userUid) => {
+export const getRecommendUser = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommendusers', {
-      params: {
+      token:token,
         userUid: userUid
-      }
     });
     console.log(response.data);
     return response.data;
@@ -73,12 +71,12 @@ export const getRecommendUser = async (userUid) => {
 export const accountLogin= async(account,password)=>{
   try{
     const response = await axios.post('http://localhost:8080/api/auth/login',{
-      params:{
+      
         userAccount:account,
         password:password
-      }
+      
     })
-    
+    console.log(response.data);
     return response.data;
   }catch(error){
     console.error('登录失败:',error);
@@ -88,11 +86,11 @@ export const accountLogin= async(account,password)=>{
 export const phoneCode= async(phone)=>{
   try{
     const response = await axios.post('http://localhost:8080/api/auth/code',{
-      params:{
+      
         phone:phone
-      }
+      
     })
-    
+    console.log(response.data);
     return response.data;
   }catch(error){
     console.error('获取验证码失败:',error);
@@ -102,10 +100,10 @@ export const phoneCode= async(phone)=>{
 export const phoneLogin= async(phone,code)=>{
   try{
     const response = await axios.post('http://localhost:8080/api/auth/mblogin',{
-      params:{
+      
         phone:phone,
         code:code
-      }
+      
     })
     console.log(response.data);
     return response.data;
@@ -117,12 +115,12 @@ export const phoneLogin= async(phone,code)=>{
 export const phoneSetup= async(phone,password)=>{
   try{
     const response = await axios.post('http://localhost:8080/api/auth/setPassword',{
-      params:{
+      
         phone:phone,
         password:password
 
       }
-    })
+    )
     console.log(response.data);
     return response.data;
   }catch(error){

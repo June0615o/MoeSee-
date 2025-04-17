@@ -16,12 +16,14 @@ export default function Video() {
    const navigate = useNavigate();
    //从url中获得uid
    const uid = new URLSearchParams(location.search).get("uid");
-   
+   const token=localStorage.getItem('token');
 
    //初始化数据
    useEffect(()=>{
         const token=localStorage.getItem('token');
         const uid=localStorage.getItem('uid');
+        
+        
         if(!token||!uid){
             alert('请先登录');
             navigate('/user');
@@ -29,13 +31,13 @@ export default function Video() {
         }
         fetchRecommendations();
        
-   },[uid])
+   },)
 
    //获取推荐视频
    const fetchRecommendations = async () => {
        try{
-        const responseVideo = await getRecommendVideos(uid);
-        const responseUser = await getRecommendUser(uid);
+        const responseVideo = await getRecommendVideos(uid,token);
+        const responseUser = await getRecommendUser(uid,token);
         console.log(responseVideo)
         console.log(responseUser)
         
@@ -56,14 +58,14 @@ export default function Video() {
    }
    //视频换一批
    const refreshDisplayVideos= async()=>{
-    const responseVideo = await getRecommendVideos(uid);
+    const responseVideo = await getRecommendVideos(uid,token);
     const videoList = responseVideo;
     setDisplayVideos(videoList);
     console.log(displayVideos)
    }
    //用户换一批
    const refreshDisplayUsers = async() => {
-    const responseUser = await getRecommendUser(uid);
+    const responseUser = await getRecommendUser(uid,token);
     const similarUsers = responseUser;
     const shuffled = [...similarUsers].sort(() => 0.5 - Math.random());
     setDisplayUsers(shuffled.slice(0, 4)); // 或者你需要的数量

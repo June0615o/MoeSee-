@@ -43,8 +43,8 @@ export default function User() {
         try{if(countdown>0||!phone)return;
         startCountdown();
         const res = await phoneCode(phone);
-        setCode2(res.code);
-        console.log(res.code);
+        setCode2(res);
+        console.log(res);
         }catch(error){
             console.log(error);
         }
@@ -54,11 +54,14 @@ export default function User() {
     const login= async()=>{
         try{
             const res = await accountLogin(account,password);
-            if(res.token&&res.uid){
+            if(res.token&&res.userUid){
             localStorage.setItem("token",res.token);
-            localStorage.setItem("uid",res.uid);
+            localStorage.setItem("uid",res.userUid);
             alert("登录成功");
-            navigate(`/video?uid=${res.uid}}`);
+            navigate(`/video?uid=${res.userUid}`);
+            }
+            else{
+                console.log("no")
             }
         
         }catch
@@ -74,7 +77,8 @@ export default function User() {
         console.log("code:"+code)
         console.log("code2:"+code2)
         if(phoneError||codeError){alert("请输入正确的手机号或验证码") ;return;}
-        if(code===code2){
+        
+        if(code==code2){
             const res= await phoneLogin(phone,code);
             console.log(res);
             if(!res.isSetup){
@@ -106,9 +110,9 @@ export default function User() {
         if(passwordError||confirmPasswordError){alert("请输入正确的密码") ;return;}
         if(signupPassword1===signupPassword2){
             //密码一致
-            console.log("account:"+account)
+            console.log("account:"+phone)
             console.log("password:"+signupPassword1)
-            const res=await phoneSetup(account,signupPassword1);
+            const res=await phoneSetup(phone,signupPassword1);
             if(res.nextStep){
                 alert("注册成功")
                 navigate(`/home`)
