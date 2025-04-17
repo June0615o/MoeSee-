@@ -71,7 +71,7 @@ public class AuthController {
         stringRedisTemplate.expire(redisKey,Duration.ofMinutes(5));
         System.out.println("验证码已发送:"+code);
 
-        return ResponseEntity.ok("验证码已发送");
+        return ResponseEntity.ok("验证码已发送,"+code);
     }
     @PostMapping("/mblogin")
     public ResponseEntity<?> mblogin(@RequestBody Map<String,String> request){

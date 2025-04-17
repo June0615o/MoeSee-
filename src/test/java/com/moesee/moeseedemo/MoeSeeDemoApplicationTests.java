@@ -2,6 +2,8 @@ package com.moesee.moeseedemo;
 
 import com.moesee.moeseedemo.controller.RecommendUserController;
 import com.moesee.moeseedemo.service.*;
+import com.moesee.moeseedemo.utils.RedisIdWorker;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +16,10 @@ public class MoeSeeDemoApplicationTests {
     MockUserWatchingService mockUserWatchingService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private RedisIdWorker redisIdWorker;
+    @Autowired
+    private SeckillService seckillService;
 
     @Test
     public void contextLoads() {
