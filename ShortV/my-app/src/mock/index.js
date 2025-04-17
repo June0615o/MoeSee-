@@ -148,3 +148,43 @@ Mock.mock('/api/getRecommendUser', 'post', (options) => {
     }
 });
 */
+import Mock from 'mockjs';
+//拦截用户密码登录api
+Mock.mock('http://localhost:8080/api/auth/login', 'post', (option) => {
+    const { params } = JSON.parse(option.body);  // 解构 params
+    console.log(params);
+    const { userAccount,password } = params;    // 从 params 中获取值
+    return {
+        token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDAwMDAiLCJleHAiOjE3NDQ2NDM5NjN9.27lmSUe0pQZUhLEwiSV1y1tmV2NJq7DCYEtkov_wt3o",
+        uid:"10001"
+    }
+});
+
+//拦截获取验证码api
+Mock.mock('http://localhost:8080/api/auth/code', 'post', (option) => {
+    const { params } = JSON.parse(option.body);  // 解构 params
+    const { phone } = params;    // 从 params 中获取值
+    return {
+        code:"123456"
+    }
+});
+
+//拦截手机号+验证码登录的api 这里的默认要进行下一步
+Mock.mock('http://localhost:8080/api/auth/mblogin', 'post', (option) => {
+    const { params } = JSON.parse(option.body);  // 解构 params
+    const { phone,code } = params;    // 从 params 中获取值
+    return {
+        message: "手机号未注册,请继续进行下一步以完成注册.",
+        nextStep: "/api/auth/setPassword",
+        isSetup:false
+    }
+});
+//设置密码登录后的api
+Mock.mock('http://localhost:8080/api/auth/setPassword', 'post', (option) => {
+    const { params } = JSON.parse(option.body);  // 解构 params
+    const { phone,password } = params;    // 从 params 中获取值
+    return {
+       message: "密码设置成功,请选择您感兴趣的词条.",
+       nextStep: "/api/register"
+    }
+});

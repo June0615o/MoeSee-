@@ -52,7 +52,6 @@ export const getRecommendVideos = async (userUid) => {
   }
 };
 //获取用户数据
-
 export const getRecommendUser = async (userUid) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommendusers', {
@@ -67,19 +66,66 @@ export const getRecommendUser = async (userUid) => {
   }
 }
 
+
+
+
 //账号密码登录api
 export const accountLogin= async(account,password)=>{
   try{
-    const response = await axios.get('http://localhost:8080/api/auth/login',{
+    const response = await axios.post('http://localhost:8080/api/auth/login',{
       params:{
         userAccount:account,
         password:password
       }
     })
-    console.log(response.data);
+    
     return response.data;
   }catch(error){
     console.error('登录失败:',error);
   }
 }
 //发送验证码的api
+export const phoneCode= async(phone)=>{
+  try{
+    const response = await axios.post('http://localhost:8080/api/auth/code',{
+      params:{
+        phone:phone
+      }
+    })
+    
+    return response.data;
+  }catch(error){
+    console.error('获取验证码失败:',error);
+  }
+}
+//手机号+验证码登录的api
+export const phoneLogin= async(phone,code)=>{
+  try{
+    const response = await axios.post('http://localhost:8080/api/auth/mblogin',{
+      params:{
+        phone:phone,
+        code:code
+      }
+    })
+    console.log(response.data);
+    return response.data;
+  }catch(error){
+    console.error('手机号登录失败:',error);
+  }
+}
+//手机登录设置密码后的api
+export const phoneSetup= async(phone,password)=>{
+  try{
+    const response = await axios.post('http://localhost:8080/api/auth/setPassword',{
+      params:{
+        phone:phone,
+        password:password
+
+      }
+    })
+    console.log(response.data);
+    return response.data;
+  }catch(error){
+    console.error('手机号登录失败:',error);
+  }
+}

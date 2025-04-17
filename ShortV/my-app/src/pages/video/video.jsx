@@ -3,7 +3,7 @@ import React from "react";
 import {useState,useEffect} from "react"
 import { SyncOutlined ,FireFilled,FireTwoTone,UserOutlined} from "@ant-design/icons";
 import { Carousel,Card,Button,FloatButton,} from 'antd';
-import { useLocation } from "react-router";
+import { useLocation,useNavigate} from "react-router";
 import { getRecommendVideos,getRecommendUser,getFirstRecommendVideos } from "../../mock/api";
 import './video.css'
 
@@ -13,14 +13,21 @@ export default function Video() {
    const [displayVideos,setDisplayVideos] = useState([]);
    const [displayUsers,setDisplayUsers] = useState([]);
    const location = useLocation();
-
+   const navigate = useNavigate();
    //从url中获得uid
    const uid = new URLSearchParams(location.search).get("uid");
    
 
    //初始化数据
    useEffect(()=>{
-       fetchRecommendations();
+        const token=localStorage.getItem('token');
+        const uid=localStorage.getItem('uid');
+        if(!token||!uid){
+            alert('请先登录');
+            navigate('/user');
+
+        }
+        fetchRecommendations();
        
    },[uid])
 
