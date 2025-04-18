@@ -26,7 +26,9 @@ export const getRecommendUser = (uid) => {
 export const getFirstRecommendVideos = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/firstrecommend', {
-        token:token,
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
         userUid: userUid
       
     });
@@ -41,8 +43,10 @@ export const getFirstRecommendVideos = async (userUid,token) => {
 export const getRecommendVideos = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommend', {
-        token:token,
-        userUid: userUid
+      headers: {
+        Authorization: `Bearer ${token}`
+    },
+    userUid: userUid
     });
     console.log(response.data);
     return response.data;
@@ -54,8 +58,10 @@ export const getRecommendVideos = async (userUid,token) => {
 export const getRecommendUser = async (userUid,token) => {
   try {
     const response = await axios.get('http://localhost:8080/api/recommendusers', {
-      token:token,
-        userUid: userUid
+      headers: {
+        Authorization: `Bearer ${token}`
+    },
+    userUid: userUid
     });
     console.log(response.data);
     return response.data;
