@@ -34,6 +34,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/auth/setPassword",
             "/api/register",
             "/api/seckill/addVoucher",
+            "/api/recommend",
+            "/api/firstrecommend",
+            "/api/recommendusers",
             "/api/seckill/order/*" // 支持通配符路径
     );
 
@@ -47,6 +50,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return; // 放行预检请求
+        }
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

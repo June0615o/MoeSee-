@@ -31,7 +31,7 @@ export default function Video() {
         }
         fetchRecommendations();
        
-   },)
+   },[])
 
    //获取推荐视频
    const fetchRecommendations = async () => {
@@ -122,8 +122,8 @@ export default function Video() {
                                     <div className="fire-container">
                                         <FireTwoTone className="fire" twoToneColor="#eb2f96" />
                                         <div className="tooltip">
-                                            <div>未来7天播放量:{video.futureViews}</div>
-                                            <div>未来7天热度: {video.futureHeat}</div>
+                                            <div>未来7天播放量:{video.videoFutureViews}</div>
+                                            <div>未来7天热度: {video.videoHeat}</div>
                                         </div>
                                     </div>
                                 </div>

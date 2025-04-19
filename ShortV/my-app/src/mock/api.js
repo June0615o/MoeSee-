@@ -29,7 +29,10 @@ export const getFirstRecommendVideos = async (userUid,token) => {
         headers: {
             Authorization: `Bearer ${token}`
         },
-        userUid: userUid
+        withCredentials: true, // 允许携带认证信息
+        params: {
+          userUid: userUid // 将 userUid 作为查询参数传递
+        },
       
     });
     console.log(response.data);
@@ -46,7 +49,10 @@ export const getRecommendVideos = async (userUid,token) => {
       headers: {
         Authorization: `Bearer ${token}`
     },
-    userUid: userUid
+    withCredentials: true, // 允许携带认证信息
+    params: {
+      userUid: userUid // 将 userUid 作为查询参数传递
+    },
     });
     console.log(response.data);
     return response.data;
@@ -61,7 +67,10 @@ export const getRecommendUser = async (userUid,token) => {
       headers: {
         Authorization: `Bearer ${token}`
     },
-    userUid: userUid
+    withCredentials: true, // 允许携带认证信息
+    params: {
+      userUid: userUid // 将 userUid 作为查询参数传递
+    },
     });
     console.log(response.data);
     return response.data;
