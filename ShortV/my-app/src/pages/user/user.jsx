@@ -115,7 +115,7 @@ export default function User() {
             const res=await phoneSetup(phone,signupPassword1);
             if(res.nextStep){
                 alert("注册成功")
-                navigate(`/home`)
+                navigate(`/home?phone=${phone}`)
             }
             setAccount("")
             setPassword("")
@@ -143,7 +143,6 @@ export default function User() {
                             }
                         }
                     />
-
                 </div>
                 <input 
                     type="password"

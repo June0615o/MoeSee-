@@ -6,6 +6,7 @@ import { Button,Card} from "antd";
 import { CheckCircleFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import { getUserId } from '../../mock/api'
+import { useSearchParams } from 'react-router';
 
 export default function Home() {
     
@@ -13,7 +14,9 @@ export default function Home() {
     const selectedCount = btnNewList.filter((item) => item.selected).length;
     const [finalNums, setFinalNums] = useState([]);
     const navigate = useNavigate();
-
+    const [searchParams] = useSearchParams();
+    const phone = searchParams.get('phone');
+    console.log(phone)
   
   const btnClick = (item) => {
     const updatedList = btnNewList.map((btn) =>
@@ -32,7 +35,7 @@ export default function Home() {
         selectedTags = selectedNums.filter((value, index, self) => {
         return self.indexOf(value) === index;
           });
-        const response = await getUserId(selectedTags);
+        const response = await getUserId(selectedTags,phone);
         console.log(response.status)
         console.log(response)
         if (response.status === 200) {

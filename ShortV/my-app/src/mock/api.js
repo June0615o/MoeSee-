@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 //用户标签选择
-export const getUserId=(tags)=>{
+export const getUserId=(tags,phone)=>{
     return axios.post('http://localhost:8080/api/register',{
-        tags:tags
+        tags:tags,
+        phone:phone
     })
 }
 
