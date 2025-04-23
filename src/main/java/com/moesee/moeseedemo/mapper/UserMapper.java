@@ -45,6 +45,9 @@ public interface UserMapper {
     void insertUserAccount(@Param("userAccount")String phone,
                            @Param("userPassword")String password);
 
+    void addUserId(@Param("userId")int userId,
+                   @Param("phone")String phone);
+
     List<Integer> getUsersByExactClusterIds(@Param("clusterIds")List<Integer> clusterIds,
                                             @Param("excludeUserId")Integer excludeUserId);
 

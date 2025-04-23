@@ -50,6 +50,14 @@
         VALUES (#{userAccount},#{userPassword})
     </insert>
 
+    <update id="addUserId">
+        UPDATE
+            user_account
+        SET
+            user_id = #{userId}
+        WHERE
+            user_account = #{phone}
+    </update>
 
 
 
