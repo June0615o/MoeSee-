@@ -5,11 +5,10 @@ import com.moesee.moeseedemo.mapper.SeckillMapper;
 import com.moesee.moeseedemo.mapper.UserMapper;
 import com.moesee.moeseedemo.service.SeckillService;
 import com.moesee.moeseedemo.utils.RedisIdWorker;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -18,14 +17,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class SeckillServiceImp implements SeckillService {
@@ -39,9 +36,9 @@ public class SeckillServiceImp implements SeckillService {
     @Autowired
     UserMapper userMapper;
     @Autowired
-    RedissonClient redissonClient;
-    @Autowired
     RedisIdWorker redisIdWorker;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
     @Override
     public boolean addSeckillVoucher(SeckillVoucherDTO seckillVoucherDTO) {
         // 秒杀券是热点key. 将其信息保存到数据库的同时,缓存至redis.
@@ -71,23 +68,34 @@ public class SeckillServiceImp implements SeckillService {
         String orderKey = "order:voucher:" + voucherId;
         long now = System.currentTimeMillis() / 1000;
         Long orderId = redisIdWorker.nextId("order");
+        String redisVoucherSeckilledKey = "order:voucher:" + voucherId + ":" + userUid;
+        Long ttlSeconds = 15 * 60 + 2L; // Redis TTL 设置为 15 分钟 2 秒
         /*
-         只有当时间、库存、一人一单条件都满足时,才具备秒杀资格
-         */
+              资格OK.先在Redis中存放订单号与状态(未支付)的 Hash.
+              键名为: order:voucher:{voucherId}:{userUid}
+              同时扣减库存并将userUid加入到Set内（必须保证原子性）;
+              同时发送TTL订单消息，并对接支付业务
+        */
         //执行lua脚本
         DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
         redisScript.setScriptText(luaScript); // luaScript 是 Lua 脚本内容
         redisScript.setResultType(Long.class);
         Long result = stringRedisTemplate.execute(redisScript,
-                List.of(voucherKey, orderKey),
+                List.of(voucherKey, orderKey, redisVoucherSeckilledKey),
                 String.valueOf(userUid),
                 String.valueOf(now),
-                String.valueOf(orderId));
+                String.valueOf(orderId),
+                String.valueOf(ttlSeconds));
 
         if(result !=null && result.equals(orderId)){
-            //资格OK.异步操作写入订单的消息队列
-            sendOrderToQueue(orderId,voucherId,userUid);
-            System.out.println("[写入消息队列成功]");
+            /*
+              一旦订单确定成功建立，发送TTL=15min 的延时消息.(redis缓存TTL=15min02s)
+              发送TTL订单消息，并对接支付业务
+             */
+            stringRedisTemplate.opsForHash().put(redisVoucherSeckilledKey, "status", "未支付");
+
+            sendOrderToDelayQueue(orderId,voucherId,userUid);
+            System.out.println("[写入延时消息队列成功]");
             return result;
         }
         return result != null ? result : -99;
@@ -100,20 +108,21 @@ public class SeckillServiceImp implements SeckillService {
             throw new RuntimeException("加载Lua脚本失败:"+ path , e);
         }
     }
-    public void sendOrderToQueue(Long orderId,Long voucherId, int userUid) {
+    public void sendOrderToDelayQueue(Long orderId,Long voucherId, int userUid) {
         try {// 准备消息内容
-            System.out.println("写入消息队列中");
+            System.out.println("写入延时消息队列中");
             Map<String, String> message = new HashMap<>();
             message.put("Id", orderId.toString());
             message.put("voucherId", voucherId.toString());
             message.put("userUid", String.valueOf(userUid));
 
-            // 将消息添加到 Redis Stream
-            stringRedisTemplate.opsForStream()
-                    .add(StreamRecords.mapBacked(message).withStreamKey("stream.orders"));
-
+            rabbitTemplate.convertAndSend("order.delay","order.delay.key",message,msg->{
+                msg.getMessageProperties().setHeader("x-delay", 15  * 60 * 1000);
+                return msg;
+            });
+            System.out.println("写入延时消息队列成功"+message);
         } catch (Exception e) {
-            System.err.println("写入消息队列失败：" + e.getMessage());
+            System.err.println("写入延时消息队列失败：" + e.getMessage());
         }
     }
         /*String userLockKey="lock:seckill:user:"+voucherId+":"+userUid;

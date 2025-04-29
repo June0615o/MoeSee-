@@ -28,6 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     // 白名单
     private static final Set<String> EXCLUDED_URIS = Set.of(
+            "/pay",
             "/api/auth/login",
             "/api/auth/code",
             "/api/auth/mblogin",

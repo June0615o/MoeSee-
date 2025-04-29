@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: ZiliZili-DEMO
+  datasource:
+    url: jdbc:mysql://localhost:3306/db02
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 192.168.88.128
+      port: 6379
+      password: 198110
+      timeout: 10000ms
+  rabbitmq:
+    host: 192.168.88.128
+    port: 5672
+    virtual-host: /
+    username: moesee
+    password: 198110
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          multiplier: 1
+          max-attempts: 3
+          stateless: true
+        acknowledge-mode: auto
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:com.moesee.mapper/*.xml
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG

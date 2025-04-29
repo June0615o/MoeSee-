@@ -1,3 +1,4 @@
+/*
 package com.moesee.moeseedemo.consumer;
 
 import com.moesee.moeseedemo.mapper.SeckillMapper;
@@ -87,4 +88,6 @@ public class OrderConsumer {
         }
     }
 }
+
+ */
 
